@@ -122,17 +122,19 @@ cp .env.example .env   # .env.example -> .env 복사 후, 사용할 LLM API 키 
 
 ```
 # 루트 경로(lira-public)에서 실행 권장
-python3 -m venv backend/.venv        # 백엔드용 가상환경 최초 1회 생성
+cd ..
+
+# 백엔드용 가상환경 최초 1회 생성
+python3 -m venv backend/.venv       
 
 # 가상환경 활성화
 # (Mac/Linux)
 source backend/.venv/bin/activate
 
 # 패키지 설치
-pip install -r /requirements.txt  
+pip install -r backend/requirements.txt  
 
 # 서버 실행 (pydantic v2 관련 DeprecationWarning 무시)
-cd ..
 PYTHONWARNINGS="ignore::DeprecationWarning" \
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
