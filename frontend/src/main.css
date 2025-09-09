@@ -1,0 +1,15 @@
+/* main.css */
+
+/* 역할 */
+/* 웹페이지의 가장 기본이 되는 (html, body)과, */
+/* React 앱이 그려지는 가장 바깥쪽 컨테이너(#root)에 */
+/* 높이를 100%로 지정하여 기준점을 만들어 준다. */
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}

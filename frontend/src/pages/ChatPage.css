@@ -1,0 +1,113 @@
+/* chatpage.css */
+/* 역할 : chatpage의 CSS 스타일을 정의한다. */
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+.chat-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: white;
+}
+
+.canvas-section {
+  height: 40%;
+  flex-shrink: 0;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  /* 수직 중앙 정렬 */
+  justify-content: center;
+  /* 수평 중앙 정렬 */
+}
+
+.chat-section {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat-section h1 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.chat-history {
+  flex-grow: 1;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.5rem;
+}
+
+.chat-bubble {
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 18px;
+  max-width: 80%;
+  line-height: 1.5;
+  word-wrap: break-word;
+  animation: slideUpFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-bubble.user {
+  background: #e1f5fe;
+  align-self: flex-end;
+}
+
+.chat-bubble.lira {
+  background: #e1f5ec;
+  align-self: flex-start;
+}
+
+.chat-input-container {
+  display: flex;
+  margin-top: 1rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.chat-input {
+  flex-grow: 1;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+
+.send-button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
