@@ -1,0 +1,108 @@
+=== LIRA 기능 통합 테스트 시작 ===
+API 주소: http://localhost:8000
+
+=== 1) UserA 이름 저장 테스트 ===
+검증: 이름 저장 기능 확인
+대상: user_id=userA, session_id=sessionA1
+입력: '안녕하세요, 제 이름은 A입니다.'
+{"output":"안녕하세요 A님, 만나서 반가워요 😊","emotion":{"emotion_1st_label":"neutral","emotion_1st_score":0.957,"emotion_2nd_label":null,"emotion_2nd_score":null,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 2) UserB 이름 저장 테스트 ===
+검증: 이름 저장 기능 확인
+대상: user_id=userB, session_id=sessionB1
+입력: '안녕하세요, 제 이름은 B입니다.'
+{"output":"안녕하세요 B님 반갑습니다 😊","emotion":{"emotion_1st_label":"neutral","emotion_1st_score":0.959,"emotion_2nd_label":null,"emotion_2nd_score":null,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 3) UserB 이름 불러오기 테스트 (B만 나와야 함) ===
+검증: 저장한 이름 정확히 불러오기
+대상: user_id=userB, session_id=sessionB1
+입력: '제 이름이 뭐였죠?'
+{"output":"B님예요.","emotion":{"emotion_1st_label":"curiosity","emotion_1st_score":0.576,"emotion_2nd_label":"neutral","emotion_2nd_score":0.354,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 4) UserA 감정 문장 저장 테스트 ===
+검증: 감정 문장 저장 (특별한 문장 기억)
+대상: user_id=userA, session_id=sessionA2
+입력: '오늘 정말 너무 기뻤어. 드디어 오늘 나만의 RAG시스템이 완성됐어!!'
+{"output":"정말 축하해요, A님! 대단한 성과네요 🎉","emotion":{"emotion_1st_label":"joy","emotion_1st_score":0.858,"emotion_2nd_label":null,"emotion_2nd_score":null,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 5) UserA 감정 문장 불러오기 테스트 ===
+검증: 감정 문장 정확히 기억하는지 확인
+대상: user_id=userA, session_id=sessionA2
+입력: '내가 기쁜 이유가 뭐였지?'
+{"output":"RAG 시스템이 완성돼서 기뻤어요.","emotion":{"emotion_1st_label":"curiosity","emotion_1st_score":0.427,"emotion_2nd_label":null,"emotion_2nd_score":null,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 6) 일정 정보 저장 테스트 ===
+검증: 날짜와 장소 정보 저장
+대상: user_id=userA, session_id=sessionA4
+입력: '내일 오후 3시 강남에서 민수랑 미팅 있어. 기억해줘.'
+{"output":"내일 오후 3시 강남에서 민수와 미팅이 있어요.","emotion":{"emotion_1st_label":"neutral","emotion_1st_score":0.659,"emotion_2nd_label":null,"emotion_2nd_score":null,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 7) 일정 정보 불러오기 테스트 ===
+검증: 저장한 일정 정확하게 불러오기
+대상: user_id=userA, session_id=sessionA4
+입력: '내 일정(날짜/장소) 뭐였지?'
+{"output":"내일 오후 3시 강남에서 민수와 미팅이 있어요.","emotion":{"emotion_1st_label":"curiosity","emotion_1st_score":0.687,"emotion_2nd_label":"neutral","emotion_2nd_score":0.323,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 8) 임시 메모 저장 테스트 (24시간 만료) ===
+검증: 임시 메모가 STM에 저장되는지 확인
+대상: user_id=userA, session_id=ttlTest
+입력: '임시 메모 : 나는 커피를 좋아한다'
+{"output":"커피를 좋아하시는군요. 😊","emotion":{"emotion_1st_label":"love","emotion_1st_score":0.638,"emotion_2nd_label":null,"emotion_2nd_score":null,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 9) 임시 메모 즉시 불러오기 테스트 ===
+검증: 저장한 임시 메모가 바로 불러와지는지 확인
+대상: user_id=userA, session_id=ttlTest
+입력: '아까 임시 메모 뭐였지?'
+{"output":"커피를 좋아한다고 하셨어요. 😊","emotion":{"emotion_1st_label":"curiosity","emotion_1st_score":0.602,"emotion_2nd_label":"neutral","emotion_2nd_score":0.337,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 10) 임시 메모 TTL 단축 (24시간 -> 10초) 테스트 ===
+설명: Redis에서 임시 메모 만료시간을 10초로 변경
+반환값: 1은 성공, 0은 실패
+대상 Redis 키: session:ttlTest
+1
+
+=== 11) TTL 만료 대기 및 확인 ===
+설명: TTL 값이 -2가 되면 키가 삭제된 것임
+대상 Redis 키: session:ttlTest
+현재 TTL: 5
+현재 TTL: 4
+현재 TTL: 3
+현재 TTL: 2
+현재 TTL: 1
+현재 TTL: -2
+-> 임시 메모 만료 완료 및 삭제됨
+
+=== 12) 장기 기억 초기화 테스트 ===
+설명: 모든 장기 기억 데이터 삭제
+============================================================
+*** 연결 정보(기본값) ***
+ - MONGO_URL: mongodb://localhost:27017/?authSource=admin
+ - WEAVIATE_URL: http://localhost:8080
+============================================================
+*** 삭제 전 용어 안내 ***
+ - MongoDB의 '문서(Document)' = 하나의 데이터(JSON 객체 단위) -> 상위개념: '컬렉션(Collection)'
+ - Weaviate의 '객체(Object)' = 하나의 데이터 인스턴스(uuid로 구분) -> 상위개념: '클래스(Class)'
+즉, '문서 수'나 '객체 수'는 모두 DB 안에 저장된 데이터 건수를 뜻한다.
+============================================================
+[MongoDB] 대상: mongodb://localhost:27017/?authSource=admin db=lira_memory coll=memory
+[MongoDB] 삭제전 문서 수: 7
+[MongoDB] 삭제된 문서 수: 7
+[MongoDB] 삭제후 문서 수: 0
+--------------------
+[Weaviate] 대상: http://localhost:8080 클래스=SemanticArchive
+[Weaviate] 삭제전 객체 수: 7
+[Weaviate] 삭제된 객체 수: 7 (클래스: SemanticArchive)
+장기 기억 초기화 완료
+
+=== 13) TTL 만료 후 임시 메모 불러오기 테스트 ===
+검증: 임시 메모가 사라져서 불러오기 실패해야 함
+대상: user_id=userA, session_id=ttlTest
+입력: '아까 임시 메모 뭐였지?'
+{"output":"모르겠어요.","emotion":{"emotion_1st_label":"curiosity","emotion_1st_score":0.602,"emotion_2nd_label":"neutral","emotion_2nd_score":0.337,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
+=== 14) 환각 방지 테스트 ===
+검증: 근거 없는 질문에 추측 대신 안전 응답(모르겠어요/기억에 없어요)인지 확인
+대상: user_id=userC, session_id=sessionC1
+입력: '내 혈액형 기억하니?'
+{"output":"모르겠어요.","emotion":{"emotion_1st_label":"curiosity","emotion_1st_score":0.623,"emotion_2nd_label":"neutral","emotion_2nd_score":0.363,"emotion_3rd_label":null,"emotion_3rd_score":null,"emotion_mode":"central"}}
+
