@@ -129,20 +129,28 @@ python3 -m venv backend/.venv
 
 # 가상환경 활성화
 # (Mac/Linux)
-source backend/.venv/bin/activate
+source ~/lira-public/backend/.venv/bin/activate
 
 # 패키지 설치
 pip install -r backend/requirements.txt  
 
 # 서버 실행 (pydantic v2 관련 DeprecationWarning 무시)
+# 주의:서버 실행은 INFO: Application startup complete. 문구가 확인 될때까지 꼭 기다려 주셔야 합니다!!
+# 첫 실행시, '약 1분'가량 기다려주시기 바랍니다.
+
 PYTHONWARNINGS="ignore::DeprecationWarning" \
 uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
 
 ### 6. 작동 테스트  
 ※ VScode메뉴창 -> Terminal -> Split Terminal선택후, 분할된 터미널에서 실행합니다    
 >예시: 백엔드 테스트용 LIRA 응답 생성  
 ```
+# 분할된 터미널에서 가상환경 설정
+source ~/lira-public/backend/.venv/bin/activate
+
+# 테스트용 curl문
 curl -X POST "http://localhost:8000/api/lira/generate" \
   -H "Content-Type: application/json" \
   -d '{"user_id":"test_user","session_id":"s1","text":"안녕"}'
