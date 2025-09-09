@@ -1,0 +1,41 @@
+# docker-compose
+# docker내부의 MongoDB, Redis, weaviate 설정
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  weaviate:
+    image: semitechnologies/weaviate:1.23.10
+    container_name: weaviate
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: "25"
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      DEFAULT_VECTORIZER_MODULE: "none"
+      ENABLE_MODULES: "none"
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+
+volumes:
+  mongo_data:
+  redis_data:
+  weaviate_data:
